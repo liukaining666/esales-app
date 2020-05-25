@@ -1,0 +1,107 @@
+//全局样式
+
+//主题
+@theme-blue: #04254a;
+@theme-orange-bg: #fff3e7;
+@theme-orange: #ff8b00;
+@theme-orange-hover: #ffa233;
+@theme-gray: #eeeeee;
+@theme-border: 1px solid @color-border;
+
+@theme-red: #c9151d;
+@theme-red-light: #efb8bb;
+
+//辅助颜色
+@color-border: #cccccc;
+@color-line: #ececec;
+@color-background: #f5f5f5;
+
+//字体颜色
+@fc-3: #333333;
+@fc-6: #666666;
+@fc-9: #999999;
+@fc-f: #ffffff;
+
+.px2rem(@name, @px) {
+  @{name}: @px / 20px * 1rem;
+}
+.g-wrapper {
+  min-height: 100vh;
+  background-color: @theme-gray;
+  .px2rem(padding-top, 50px);
+  padding-bottom: 3rem;
+  overflow: hidden;
+}
+
+//主题按钮样式
+.van-button--primary {
+  background-color: @theme-red;
+  border-color: @theme-red;
+}
+.van-button--plain {
+  background-color: #ffffff;
+  color: @theme-red !important;
+  border-color: @theme-red;
+}
+//picker 确定与取消按钮字体颜色
+.van-picker__toolbar {
+  .van-picker__cancel,
+  .van-picker__confirm {
+    color: @theme-orange;
+  }
+}
+
+.van-overlay {
+  z-index: 999 !important;
+}
+
+
+// 头部nav样式
+.van-nav-bar {
+  background-color: @theme-red !important;
+  color: #ffffff;
+  .van-nav-bar__title {
+    color: #ffffff;
+  }
+  .van-icon {
+    color: #ffffff !important;
+  }
+}
+a{
+  color: blue !important;
+}
+// 轮播图下面点点的颜色
+.van-swipe__indicators {
+  .van-swipe__indicator {
+    background-color: @theme-red-light !important;
+  }
+  .van-swipe__indicator--active {
+    background-color: @theme-red !important;
+  }
+}
+
+.basic-table {
+  .px2rem(font-size, 14px);
+  width: 100%;
+  text-align: center;
+}
+
+.m-picker-wrapper {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 999;
+}
+
+.m-iframe-wrapper {
+  width: 100vw;
+  height: 80vh;
+  margin-top: 10vh;
+  background: #fff;
+  position: relative;
+  iframe {
+    width: 100%;
+    height: 100%;
+  }
+}
