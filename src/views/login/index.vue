@@ -1,6 +1,6 @@
 <template>
   <div>
-    <van-nav-bar title="登录" v-if="this.wechat()" fixed left-arrow @click-left="$router.go(-1)"></van-nav-bar>
+    <van-nav-bar title="登录" v-if="this.wechat()" left-arrow @click-left="$router.go(-1)"></van-nav-bar>
     <van-cell-group class="login-form">
       <van-field
         v-model="username"
