@@ -32,6 +32,12 @@ const routes = [
         name: "account",
         component: (resolve) =>
           require(["../views/account/index.vue"], resolve),
+      },
+      {
+        path: "/resources", // 资源
+        name: "resources",
+        component: (resolve) =>
+          require(["../views/resources/index.vue"], resolve),
       }
     ],
   },

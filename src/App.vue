@@ -23,6 +23,9 @@ export default {
 };
 </script>
 <style lang="less">
+.px2rem(@name, @px) {
+  @{name}: @px / 20px * 1rem;
+}
 @media screen and (min-width: 1080px) {
   html {
     font-size: 57.6px !important;
@@ -39,8 +42,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #333333;
-  background: #ffffff;
+  background: #eeeeee;
   min-height: 100vh;
   margin: 0 auto;
+  .px2rem(font-size, 14px)
 }
 </style>
