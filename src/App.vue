@@ -6,7 +6,7 @@
 </template>
 <script>
 import { mapState } from "vuex";
-import globalLoading from "@/components/globalLoading/index.vue";
+import globalLoading from "@/components/globalLoading/globalLoading.vue";
 import { isIOS } from "mobile-device-detect";
 export default {
   computed: {
