@@ -34,6 +34,18 @@ const routes = [
           require(["../views/account/index.vue"], resolve),
       },
       {
+        path: "/myInformation", // 我的信息
+        name: "myInformation",
+        component: (resolve) =>
+          require(["../views/myInformation/index.vue"], resolve),
+      },
+      {
+        path: "/myInformation/updateLoginPassword", // 修改登录密码
+        name: "updateLoginPassword",
+        component: (resolve) =>
+            require(["../views/myInformation/updateLoginPassword/index.vue"], resolve),
+      },
+      {
         path: "/resources", // 资源
         name: "resources",
         component: (resolve) =>

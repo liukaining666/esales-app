@@ -1,8 +1,8 @@
 <template>
+
   <div class="g-wrapper">
     <div class="m-top-search-wrapper">
       <van-search class="top-search"
-                  v-model="value"
                   shape="round"
                   @click="show=true"
                   placeholder="请输入品名、材质、规格、产地"
@@ -11,17 +11,19 @@
         <van-nav-bar title="钢材好" v-if="this.wechat()"  left-arrow @click-left="show = false"></van-nav-bar>
         <van-col span="24" class="search">
           <van-search
+                  v-model="value"
                   background="#d1d1d1"
                   autofocus
                   placeholder="搜索挂牌资源,请输入品名、材质、规格、产地"
                   shape="round"
+                  @search="onSearch"
           />
         </van-col>
         <van-col span="24" class="searchContent">
           <div>搜索指定内容</div>
         </van-col>
         <van-row class="searchTxt">
-          <van-col span="4" offset="4" v-for="(value,index) in searchTxtList" :key="index" :class="{backColorStyle:backColor}">{{value.name}}</van-col>
+          <van-col span="4" offset="3" v-for="(value,index) in searchTxtList"  @click="changeColor(index)" :key="index" :class="{backColorStyle:value.backColor}">{{value.name}}</van-col>
 
         </van-row>
 
@@ -34,21 +36,24 @@
           <img v-lazy="image" />
         </van-swipe-item>
       </van-swipe>
-
     </div>
+<!--
+    <van-notice-bar :text="'成交动态:'+value.hzname+'  '+value.pm+'  '+value.gg+'  ￥'+value.price+'  '+value.cdate" left-icon="volume-o" />
+-->
+    <van-notice-bar :text="'成交动态:'+contractVOList" left-icon="volume-o" />
     <div class="m-inner menu-list">
-      <van-grid :gutter="10" :column-num="5">
+      <van-grid :gutter="10" :column-num="4">
         <van-grid-item
                 v-for="(item, index) in menuList"
                 :key="index"
-                icon="photo-o"
+                :icon="item.iconUrl"
                 :text="item.name"
                 @click="linkTo(item.url)"
-        />
+        >
+        </van-grid-item>
       </van-grid>
     </div>
-
-    <div class="m-inner shipment-card-list">
+      <div class="m-inner shipment-card-list">
       <van-row>
         <van-col span="12">
           <div class="shipment-card shipment-card_1">
@@ -74,81 +79,127 @@
         </van-tab>
       </van-tabs>
     </div>
-
-    <!--  <div class="m-inner plan-tab">
+      <div class="m-inner plan-tab">
         <van-tabs v-model="activePlan">
           <van-tab title="今日计划">
-            <div class="c-plan-card" v-for="(itemP, indexP) in list" :key="indexP">
+            <div class="c-plan-card" v-for="(itemP, indexP) in todayPlan.fqj" :key="indexP">
               <div class="c-title">
                 <div class="inner">
                   <div class="left">
-                    <span class="title_1">盘螺</span>
-                    <span class="title_2">抚顺新钢铁</span>
-                    <span class="title_3 c-value">HT19099409401</span>
+                    <!--<span class="title_0">[天鹅]</span>-->
+                    <span class="title_1">{{itemP.pm}}</span>
+                    <span class="title_2">{{itemP.hzname}}</span>
+                    <span class="title_3 c-value">{{itemP.fphm}}</span>
                   </div>
-                  <div class="right">
-                    <span class="title_4">建龙自营</span>
-                  </div>
+
                 </div>
               </div>
               <div class="c-content">
-                <div class="list-item" v-for="(item, index) in list" :key="index">
+                <div class="list-item" v-for="(item, index) in todayPlan.fqj[indexP].mxlist" :key="index">
                   <div>
-                    <span class="c-value margin-right_30">HRB400E @10</span>
+                    <span class="c-value margin-right_30">{{item.cz}}φ{{item.gg}}</span>
                   </div>
                   <div>
                     <span class="icon-label bg-red">总</span>
-                    <span class="c-value">100吨</span>
+                    <span class="c-value">{{item.sl2}}吨</span>
                   </div>
                   <div>
                     <span class="icon-label bg-yellow">开单</span>
-                    <span class="c-value">30吨</span>
+                    <span class="c-value">{{item.sl2}}吨</span>
                   </div>
                   <div>
                     <span class="icon-label bg-blue">实提</span>
-                    <span class="c-value">30吨</span>
+                    <span class="c-value">{{item.sl2ok}}吨</span>
                   </div>
                 </div>
               </div>
             </div>
+            <div class="c-plan-card" v-for="(itemP, indexP) in todayPlan.qj" :key="indexP+'T'">
+                  <div class="c-title">
+                      <div class="inner">
+                          <div class="left">
+                              {{indexP}}
+                              <!--<span class="title_0">[天鹅]</span>-->
+                              <span class="title_1">{{itemP.wzname}}</span>
+                              <span class="title_2">{{itemP.hzname}}</span>
+                              <span class="title_3 c-value">{{itemP.fphm}}</span>
+                          </div>
+
+                      </div>
+                  </div>
+                  <div class="c-content">
+                      <div class="list-item" v-for="(item, index) in todayPlan.qj[indexP].ecDeliverPlanVOList" :key="index">
+                          <div>
+                              <span class="c-value margin-right_30">{{item.cz}}φ{{item.spec}}</span>
+                          </div>
+                          <div>
+                              <span class="icon-label bg-red">总</span>
+                              <span class="c-value">{{item.planzl}}吨</span>
+                          </div>
+                          <div>
+                              <span class="icon-label bg-yellow">开单</span>
+                              <span class="c-value">{{item.kdzl}}吨</span>
+                          </div>
+                          <div>
+                              <span class="icon-label bg-blue">实提</span>
+                              <span class="c-value">{{item.cczl}}吨</span>
+                          </div>
+                      </div>
+                  </div>
+              </div>
           </van-tab>
           <van-tab title="发运进度">
             <div class="c-plan-card" v-for="(itemP, indexP) in list" :key="indexP">
               <div class="c-title">
+               <div class="address" style="background: #c8161e;padding: 10px 0">
+                   <span style="margin-left: 20px">
+                       [收货地]辽宁省 沈阳市 铁西区 XXXX
+                   </span>
+               </div>
                 <div class="inner">
                   <div class="left">
                     <span class="title_1">盘螺</span>
                     <span class="title_2">抚顺新钢铁</span>
                     <span class="title_3 c-value">HT19099409401</span>
                   </div>
-                  <div class="right">
-                    <span class="title_4">建龙自营</span>
-                  </div>
+                    <div class="right">
+                        <span class="title_4">龙翔云商</span>
+                    </div>
                 </div>
               </div>
               <div class="c-content">
-                <div class="list-item" v-for="(item, index) in list" :key="index">
+                <div class="list-item" v-for="(item, index) in listSon" :key="index">
                   <div>
                     <span class="c-value margin-right_30">HRB400E @10</span>
                   </div>
-                  <div>
-                    <span class="icon-label bg-red">总</span>
-                    <span class="c-value">100吨</span>
-                  </div>
-                  <div>
+                  <div class="orderQuantity">
                     <span class="icon-label bg-yellow">开单</span>
                     <span class="c-value">30吨</span>
                   </div>
-                  <div>
+                  <div class="bringQuantity">
                     <span class="icon-label bg-blue">实提</span>
                     <span class="c-value">30吨</span>
                   </div>
                 </div>
+                  <div>
+                      <van-row class="shopping">
+                          <van-col span="3">
+                              <img src="../../assets/img/wuliuqiache2.png" height="32" width="32"/>
+                          </van-col>
+                          <van-col span="6">
+                              <span>派车单已生成</span>
+                          </van-col>
+                          <van-col span="10" offset="4">
+                              <span>2019-02-12 21:12</span>
+                          </van-col>
+                      </van-row>
+
+                  </div>
               </div>
             </div>
           </van-tab>
         </van-tabs>
-      </div>-->
+      </div>
   </div>
 </template>
 
@@ -168,7 +219,8 @@
     Icon,
     Swipe,
     SwipeItem,
-    Popup
+    Popup,
+    NoticeBar
   } from "vant";
   export default {
     name: "shopIndex",
@@ -186,60 +238,81 @@
       [Icon.name]: Icon,
       [Swipe.name]: Swipe,
       [SwipeItem.name]: SwipeItem,
-      [Popup.name]: Popup
-    },
+      [Popup.name]: Popup,
+      [NoticeBar.name]: NoticeBar,
+  },
     data() {
       return {
+          mainImg2:'',
         backColor:true,
-        show:true,
+        show:false,
         images: [
           "https://img.yzcdn.cn/vant/apple-1.jpg",
-          "https://img.yzcdn.cn/vant/apple-2.jpg"
+          "https://img.yzcdn.cn/vant/apple-2.jpg",
         ],
         value: "",
         menuList: [
           { name: "订单", url: "/business/inventory" ,iconUrl: "http://testn.longscs.com/file/home/icon_7.png"},
-          { name: "计划", url: "/business/inventory" },
-          { name: "提单", url: "/business/inventory" },
-          { name: "物流", url: "/business/inventory" },
-          { name: "异议", url: "/business/inventory" },
-          { name: "结算", url: "/business/inventory" },
-          { name: "发票", url: "/business/inventory" },
-          { name: "贷款", url: "/business/inventory" },
-          { name: "数据", url: "/business/inventory" },
-          { name: "资讯", url: "/business/inventory" }
+          { name: "计划", url: "/business/inventory" ,iconUrl: "http://testn.longscs.com/file/home/icon_13.png"},
+          { name: "提单", url: "/business/inventory" ,iconUrl: "http://testn.longscs.com/file/home/icon_3.png"},
+          { name: "物流", url: "/business/inventory" ,iconUrl: "http://testn.longscs.com/file/home/icon_6.png"},
+          { name: "异议", url: "/business/inventory" ,iconUrl: "http://testn.longscs.com/file/home/icon_9.png"},
+          { name: "结算", url: "/business/inventory" ,iconUrl: "http://testn.longscs.com/file/home/icon_4.png"},
+          { name: "发票", url: "/business/inventory" ,iconUrl: "http://testn.longscs.com/file/home/icon_12.png"},
+          { name: "贷款", url: "/myInformation" ,iconUrl: "http://testn.longscs.com/file/home/icon_11.png"},
         ],
         active: 0,
-        activePlan: 1,
+        activePlan: 0,
         list: [1, 2, 3],
+        listSon: [1],
         searchTxtList:[
-          {id:1,name:'挂牌'},{id:2,name:'计划'},{id:3,name:'提单'},{id:4,name:'订单'},{id:5,name:'快讯'},{id:6,name:'公告'},
+          {id:1,name:'挂牌',backColor:true},{id:2,name:'计划',backColor:false},{id:3,name:'提单',backColor:false},
+          {id:4,name:'订单',backColor:false},{id:5,name:'快讯',backColor:false},{id:6,name:'公告',backColor:false},
         ],
-        //会员编码
-        hydm:'001003',
+
         //上月出货量
         lastMonthShipment:'- -',
         //本月出货量
         thisMonthShipment:'- -',
+        //实时发货量
         realTimeShipmentList:[],
+        //出货量走势
         realTimeShipmentList2:[],
+        //今日计划
+        todayPlan:{},
+        //最新成交动态
+        contractVOList:"",
       };
     },
     mounted() {
-      //this.queryTodayPlan()
-      /*this.queryRealTimeShipment();
+      /*this.queryTodayPlan()
+      this.queryRealTimeShipment();
       this.queryLastMonthShipment();
       this.queryThisMonthShipment();
       this.querySevenDaysShipment();*/
+      this.realContract();
     },
     methods: {
-      //搜索
-      shuru(){
-        console.log(111);
+
+      //成交动态通知
+      realContract(){
+          this.$post('/public/ecConsult/realContract.do').then(res =>{
+              if (res.success){
+                  for (let i =0;i<res.values.contractVOList.length;i++){
+                      this.contractVOList = this.contractVOList+'\xa0\xa0\xa0\xa0\xa0\xa0'+
+                          res.values.contractVOList[i].hzname+' '+
+                          res.values.contractVOList[i].pm+' '+
+                          res.values.contractVOList[i].gg+' ￥'+
+                          res.values.contractVOList[i].price+' '+
+                          res.values.contractVOList[i].cdate
+                  }
+              }
+          })
       },
+
       //上月出货量
       queryLastMonthShipment(){
-        this.$post('/public/shipmentData/queryLastMonthShipment.do',{hydm:this.hydm}).then(res =>{
+        this.$post('/public/shipmentData/queryLastMonthShipment.do').then(res =>{
           if (res.success){
             this.lastMonthShipment = res.values.lastMonthShipment;
           }
@@ -248,7 +321,7 @@
 
       //本月出货量
       queryThisMonthShipment(){
-        this.$post('/public/shipmentData/queryThisMonthShipment.do',{hydm:this.hydm}).then(res =>{
+        this.$post('/public/shipmentData/queryThisMonthShipment.do').then(res =>{
           if (res.success){
             this.thisMonthShipment = res.values.thisMonthShipment;
           }
@@ -256,7 +329,7 @@
       },
       //实时出货量
       async queryRealTimeShipment(){
-        await this.$post('/public/shipmentData/queryRealTimeShipment.do',{hydm : this.hydm}).then(res =>{
+        await this.$post('/public/shipmentData/queryRealTimeShipment.do').then(res =>{
           if (res.success) {
             this.realTimeShipmentList = res.values.realTimeShipmentList;
           }
@@ -265,24 +338,32 @@
       },
       //出货量走势
       async querySevenDaysShipment(){
-        await this.$post('/public/shipmentData/querySevenDaysShipment.do',{hydm : this.hydm}).then(res =>{
+        await this.$post('/public/shipmentData/querySevenDaysShipment.do').then(res =>{
           if (res.success) {
             this.realTimeShipmentList2 = res.values.realTimeShipmentList;
           }
         });
         await this.tabChange();
       },
-      ///public/startPage/queryTodayPlan.do
+      //今日计划
       queryTodayPlan(){
-        this.$post('/public/startPage/queryTodayPlan.do',{hydm : this.hydm}).then(res =>{
+        this.$post('/public/startPage/queryTodayPlan.do').then(res =>{
           if (res.success) {
-            console.log(res);
+              console.log(res);
+              this.todayPlan = res.values.todayPlan;
           }
         });
       },
-
+        changeColor(index){
+            this.searchTxtList.forEach(element =>{
+                element.backColor = false;
+            });
+            this.searchTxtList[index].backColor = true;
+        },
       // 搜索
-      onSearch() {},
+      onSearch() {
+          this.$toast(this.value);
+      },
       // 跳转链接
       linkTo(url) {
         this.$router.push({
@@ -303,6 +384,7 @@
               dimensions: ["product", "昨日出货量", "今日出货量", "昨日出货额", "今日出货额"],
               source: this.realTimeShipmentList
             },
+
             xAxis: { type: "category" },
             yAxis: [
               {
@@ -361,13 +443,13 @@
     .px2rem(margin-right, 10px);
   }
   .bg-red {
-    background-color: #ee6666;
+    background-color: #C9151E;
   }
   .bg-yellow {
-    background-color: #66ee66;
+    background-color: #FF8847;
   }
   .bg-blue {
-    background-color: #6666ee;
+    background-color: #15BCBA;
   }
   .g-wrapper {
     min-height: 100vh;
@@ -376,7 +458,6 @@
   }
   .m-inner {
     background-color: #ffffff;
-    margin-bottom: 0.5rem;
   }
   // 头部banner
   .top-banner {
@@ -507,6 +588,11 @@
         .right {
           float: right;
         }
+          .title_0 {
+              .px2rem(font-size, 18px);
+              .px2rem(margin-right, 10px) !important;
+              color: #9B9B9B;
+          }
         .title_1 {
           .px2rem(font-size, 18px);
           .px2rem(margin-right, 10px) !important;
@@ -514,8 +600,8 @@
         .title_2 {
           padding: 0.1rem;
           .px2rem(border-radius, 2px);
-          border: 0.05rem solid #ff0000;
-          color: #ff0000;
+          border: 0.05rem solid #9B9B9B;
+          color: #9B9B9B;
         }
         .title_4 {
           padding: 0.1rem;
@@ -526,7 +612,7 @@
       }
     }
     .c-content {
-      .icon-label {
+        .icon-label {
         padding: 0 0.15rem;
         margin: 0 0.2rem;
         .px2rem(font-size, 14px);
@@ -538,8 +624,26 @@
         padding: 0 0.5rem;
         margin: 0.4rem 0;
         display: flex;
+          span{
+              .px2rem(font-size, 12px);
+          }
       }
+        .orderQuantity{
+            .px2rem(margin-left, 52px);
+        }
+        .bringQuantity{
+            .px2rem(margin-left, 32px);
+        }
+        .shopping{
+            .px2rem(margin-left, 12px);
+            line-height: 32px;
+        }
     }
+      .address{
+          color: #fff;
+          border-top-left-radius: 5px;
+          border-top-right-radius: 5px;
+      }
   }
   .searchContent{
     text-align: center;

@@ -103,7 +103,7 @@
             },
             //退出登录
             quitLogin(){
-                this.$toast("退出1212221")
+                this.$toast("退出")
                 this.$post('/public/elgrzc/loginout.do',{ticket:Cookies.get("_tcdapt_")}).then(res =>{
                     console.log(res);
                 })

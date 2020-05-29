@@ -4,6 +4,7 @@
     <global-loading v-show="LOADING"></global-loading>
   </div>
 </template>
+
 <script>
 import { mapState } from "vuex";
 import globalLoading from "@/components/globalLoading/globalLoading.vue";
@@ -15,6 +16,9 @@ export default {
   name: "App",
   components: {
     globalLoading
+  },
+  mounted(){
+
   },
   methods: {},
   beforeMount() {
