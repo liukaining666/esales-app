@@ -6,8 +6,8 @@
                 <img src="../../assets/img/headPortrait.png" height="52" width="52"/>
             </van-col>
             <van-col span="14" offset="1" class="userName">
-                <div>张三</div>
-                <div>大连瑞丰金属有限公司</div>
+                <div>{{bsMbOptVO.username}}</div>
+                <div>{{bsMbOptVO.str04}}</div>
             </van-col>
             <van-col span="2">
                 <van-button color="#ff8847"  @click="$router.go(-1)"  size="small">返回</van-button>
@@ -18,12 +18,13 @@
                 <van-row>
                     <van-col span="24" offset="2" class="userName2">
                         <van-icon name="manager" color="#B3B3B3" size="1.5em"/>
-                        用户名 : qbx
+                        用户名 : {{bsMbOptVO.userid}}
                     </van-col>
+
 
                     <van-col span="24" offset="2" class="phone">
                         <van-icon name="phone" color="#B3B3B3" size="1.5em"/>
-                        手机号 : 18643205210
+                        手机号 : {{bsMbOptVO.mobile}}
                     </van-col>
                 </van-row>
             </div>
@@ -32,6 +33,9 @@
                 <van-cell title="维护业务密码" is-link />
                 <van-cell title="维护财务密码" is-link />
             </div>
+        </div>
+        <div class="quitDiv">
+            <van-button @click="quitLogin" round type="danger" size="large">退出登录</van-button>
         </div>
 
     </div>
@@ -57,6 +61,7 @@
         Cell,
         CellGroup
     } from "vant";
+    import Cookies from "js-cookie";
     export default {
         components: {
             [NavBar.name]: NavBar,
@@ -77,7 +82,36 @@
             [CellGroup.name]: CellGroup,
             [Cell.name]: Cell,
     },
-        name: "myInformation"
+        name: "myInformation",
+        data(){
+          return{
+              //我的信息
+              bsMbOptVO:{},
+          }
+        },
+        mounted(){
+            this.menberData();
+        },
+        methods:{
+            //我的信息
+            menberData(){
+                this.$post('/public/elgrzc/menberData.do').then(res =>{
+                    if(res.success){
+                        this.bsMbOptVO = res.values.bsMbOptVO;
+                    }
+                })
+            },
+            //退出登录
+            quitLogin(){
+                this.$toast("退出111111111111111111111")
+                this.$post('/public/elgrzc/loginout.do',{ticket:Cookies.get("_tcdapt_")}).then(res =>{
+                    console.log(res);
+                })
+                this.$router.push({
+                    name: 'home',
+                })
+            }
+        }
     }
 </script>
 
@@ -119,5 +153,11 @@
     }
     .psdMaintenance{
         .px2rem(padding-top, 30px);
+    }
+    .quitDiv{
+        .px2rem(padding-top, 30px);
+        .px2rem(padding-bottom, 30px);
+        width: 70%;
+        margin: auto;
     }
 </style>
